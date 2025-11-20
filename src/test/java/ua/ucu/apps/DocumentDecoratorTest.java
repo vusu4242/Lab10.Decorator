@@ -1,6 +1,7 @@
 package ua.ucu.apps;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +13,14 @@ class DocumentDecoratorTest {
         mockDocument = new MockedDocument();
         mockDocument.setGcsPath("/test/path.txt");
         mockDocument.setContent("Test content");
+        // Clear cache before each test
+        DBConnection.getInstance().clearCache();
+    }
+    
+    @AfterEach
+    void tearDown() {
+        // Clear cache after each test
+        DBConnection.getInstance().clearCache();
     }
     
     @Test
