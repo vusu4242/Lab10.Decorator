@@ -1,12 +1,11 @@
 package ua.ucu.apps;
 
+import lombok.SneakyThrows;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
-import lombok.SneakyThrows;
 
 public class DBConnection {
     private static DBConnection dbConnection;
@@ -14,8 +13,8 @@ public class DBConnection {
     
     @SneakyThrows
     private DBConnection() {
-        this.connection = DriverManager.getConnection(
-            "jdbc:sqlite:/Users/sasha/sources_ucu/cache.db");
+        // Use in-memory database for testing
+        this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
         createTableIfNotExists();
     }
     
@@ -50,10 +49,22 @@ public class DBConnection {
         }
     }
     
+    @SneakyThrows
+    public void clearCache() {
+        String deleteSQL = "DELETE FROM documents";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(deleteSQL);
+        }
+    }
+    
     public static DBConnection getInstance() {
         if (dbConnection == null) {
             dbConnection = new DBConnection();
         }
         return dbConnection;
+    }
+    
+    public static void resetInstance() {
+        dbConnection = null;
     }
 }
